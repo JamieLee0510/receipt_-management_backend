@@ -4,6 +4,7 @@ const pool = require("../model/db");
 module.exports = {
   //Get all receipts
   getAllReceipt: async (req, res) => {
+    console.log("now wana get all receipt");
     const user_id = req.payload.userID;
     const all_receipt = await pool.query(
       "SELECT * FROM receipt WHERE user_id=($1)",
@@ -29,7 +30,7 @@ module.exports = {
       }
 
       const new_receipt = await pool.query(
-        "INSERT INTO receipt (receipt_id, store, datetime, tag, user_id, discount,  purchase_item) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "INSERT INTO receipt (receipt_id, store, datetime, tag, user_id, discount,  purchase_item, totalcost) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
         [
           req_data.receipt_id,
           req_data.store,
@@ -38,6 +39,7 @@ module.exports = {
           req.payload.userID,
           req_data.discount,
           purchase_item_str,
+          req_data.totalcost,
         ]
       );
       return res.json(new_receipt.rows[0]);
@@ -62,7 +64,7 @@ module.exports = {
       }
       const purchase_item_str = JSON.stringify(req_data.purchase_item);
       const updated_receipt = await pool.query(
-        "UPDATE receipt SET (receipt_id, store, datetime, tag, user_id, discount,  purchase_item)=($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "UPDATE receipt SET (receipt_id, store, datetime, tag, user_id, discount,  purchase_item, totalcost)=($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
         [
           req_data.receipt_id,
           req_data.store,
@@ -71,6 +73,7 @@ module.exports = {
           user_id,
           req_data.discount,
           purchase_item_str,
+          req_data.totalcost,
         ]
       );
       return res.send({ statue: "success", result: updated_receipt });

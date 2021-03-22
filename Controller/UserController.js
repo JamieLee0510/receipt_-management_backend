@@ -46,37 +46,51 @@ module.exports = {
   },
   login: async (req, res) => {
     const req_data = req.body;
+    try {
+      const user = await pool.query("select * from userdata where email=($1)", [
+        req_data.email,
+      ]);
+      if (user.rows.length === 0) {
+        return res.send({
+          success: false,
+          message: "此帳號尚未註冊",
+        });
 
-    const user = await pool.query("SELECT * FROM userdata WHERE email=($1)", [
-      req_data.email,
-    ]);
-    if (user.rows.length === 0) {
-      res.send({
-        success: false,
-        message: "此帳號尚未註冊",
-      });
-      throw createError.NotFound("User not registered");
-    } else if (user.rows[0].password !== req_data.password) {
-      res.send({
-        success: false,
-        message: "密碼錯誤",
-      });
-      throw createError.Unauthorized("Username/password not valid");
-    } else {
-      const accessToken = await signAccessToken(user.rows[0].user_id);
-      const refreshToken = await signRefreshToken(user.rows[0].user_id);
-      console.log("login success");
-      return res.send({ accessToken: accessToken, refreshToken: refreshToken });
+        // throw createError.NotFound("User not registered");
+      } else if (user.rows[0].password !== req_data.password) {
+        return res.send({
+          success: false,
+          message: "password not valid",
+        });
+        // throw createError.Unauthorized("Username/password not valid");
+      } else {
+        const accessToken = await signAccessToken(user.rows[0].user_id);
+        const refreshToken = await signRefreshToken(user.rows[0].user_id);
+        console.log("login success");
+        return res.send({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        });
+      }
+    } catch (err) {
+      console.log(err.message);
     }
   },
 
-  //Vue webApp 測試auth的終端
-  //    user: (req, res) => {
-  //     const auth = req.payload.username;
-  //     console.log(auth);
-  //     return res.json({
-  //       status: "success",
-  //       data: auth,
-  //     });
-  //   },
+  // Vue webApp 測試auth的終端
+  user: (req, res) => {
+    if (req.payload === "Unauthorized")
+      return res.json({
+        status: "Unauthorized",
+      });
+    else {
+      const auth = req.payload.userID;
+      console.log(auth);
+      return res.json({
+        status: "success",
+        user_id: auth,
+        authority: "user",
+      });
+    }
+  },
 };

@@ -45,9 +45,12 @@ module.exports = {
         // console.log("verifyAccessToken, JWT verify fail");
         const message =
           err.name === "JsonWebTokenError" ? "Unauthorized" : err.message;
-        return next(httpError.Unauthorized(message));
+        req.payload = "Unauthorized";
+        console.log("err message", message);
+      } else {
+        req.payload = payload;
       }
-      req.payload = payload;
+
       //   console.log(req.payload);
       next();
     });

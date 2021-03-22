@@ -1,6 +1,7 @@
 const express = require("express");
 const port = process.env.PORT | 3000;
 const router = require("./routes/router");
+const cors = require("cors");
 
 //inorder to read .env
 require("dotenv").config();
@@ -9,6 +10,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/", router);
 

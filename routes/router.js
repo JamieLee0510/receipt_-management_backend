@@ -8,6 +8,7 @@ const ReceiptController = require("../Controller/ReceiptController");
 //user control area
 router.post("/api/v1/user/register", UserControlloer.register);
 router.post("/api/v1/user/login", UserControlloer.login);
+router.get("/api/v1/user/authority", verifyAccessToken, UserControlloer.user);
 
 //receipt control area
 
