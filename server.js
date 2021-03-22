@@ -4,7 +4,7 @@ const router = require("./routes/router");
 const cors = require("cors");
 
 //inorder to read .env
-require("dotenv").config();
+// require("dotenv").config();
 
 const app = express();
 
