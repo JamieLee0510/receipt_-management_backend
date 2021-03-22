@@ -14,6 +14,10 @@ app.use(cors());
 
 app.use("/", router);
 
+app.get("/", (req, res) => {
+  res.send("welcome to the home page babe");
+});
+
 app.listen(port, (err) => {
   if (err) {
     console.log(err);
