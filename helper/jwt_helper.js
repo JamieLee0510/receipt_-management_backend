@@ -50,8 +50,6 @@ module.exports = {
       } else {
         req.payload = payload;
       }
-
-      //   console.log(req.payload);
       next();
     });
   },

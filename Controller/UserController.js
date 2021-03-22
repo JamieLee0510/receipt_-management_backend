@@ -11,23 +11,25 @@ module.exports = {
   register: async (req, res, next) => {
     try {
       const req_data = req.body;
+      console.log(req.body);
 
       const doseExist = await pool.query(
-        "SELECT email FROM userdata WHERE email=($1)",
-        [req_data.username]
+        `SELECT user_email FROM userdata WHERE user_email=($1)`,
+        [req_data.email]
       );
       if (doseExist.rows.length !== 0) {
         res.send({
           success: false,
-          message: "此名字已有人使用，請使用其他名字",
+          message: "此email已註冊過",
         });
         throw createError.Conflict(
           `${req_data.email} is already been registered`
         );
       }
+      console.log([req_data.email, req_data.password, req_data.username]);
       const new_user = await pool.query(
-        "INSERT INTO userdata (email, password, name) VALUES ($1, $2, $3) RETURNING *",
-        [req_data.email, req_data.password, req_data.name]
+        `INSERT INTO userdata (user_email, user_password, user_name) VALUES ($1, $2, $3) RETURNING *`,
+        [req_data.email, req_data.password, req_data.username]
       );
       //to do, maybe need to modify
       console.log(new_user.rows[0]);
@@ -47,9 +49,10 @@ module.exports = {
   login: async (req, res) => {
     const req_data = req.body;
     try {
-      const user = await pool.query("select * from userdata where email=($1)", [
-        req_data.email,
-      ]);
+      const user = await pool.query(
+        "SELECT * FROM userdata WHERE user_email=($1)",
+        [req_data.email]
+      );
       if (user.rows.length === 0) {
         return res.send({
           success: false,
