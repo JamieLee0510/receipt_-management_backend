@@ -4,7 +4,6 @@ const pool = require("../model/db");
 module.exports = {
   //Get all receipts
   getAllReceipt: async (req, res) => {
-    console.log("now wana get all receipt");
     const user_id = req.payload.userID;
     const all_receipt = await pool.query(
       "SELECT * FROM receipt WHERE user_id=($1)",
@@ -64,16 +63,16 @@ module.exports = {
       }
       const purchase_item_str = JSON.stringify(req_data.purchase_item);
       const updated_receipt = await pool.query(
-        "UPDATE receipt SET (receipt_id, store, datetime, tag, user_id, discount,  purchase_item, totalcost)=($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+        "UPDATE receipt SET (receipt_id, store, datetime, tag,  discount,  purchase_item, totalcost)=($1, $2, $3, $4, $5, $6, $7) WHERE id=($8) RETURNING *",
         [
           req_data.receipt_id,
           req_data.store,
           req_data.datetime,
           req_data.tag,
-          user_id,
           req_data.discount,
           purchase_item_str,
           req_data.totalcost,
+          data_id,
         ]
       );
       return res.send({ statue: "success", result: updated_receipt });

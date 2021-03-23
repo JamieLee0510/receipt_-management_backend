@@ -11,7 +11,7 @@ module.exports = {
   register: async (req, res, next) => {
     try {
       const req_data = req.body;
-      console.log(req.body);
+      // console.log(req.body);
 
       const doseExist = await pool.query(
         `SELECT user_email FROM userdata WHERE user_email=($1)`,
@@ -26,16 +26,16 @@ module.exports = {
           `${req_data.email} is already been registered`
         );
       }
-      console.log([req_data.email, req_data.password, req_data.username]);
+      // console.log([req_data.email, req_data.password, req_data.username]);
       const new_user = await pool.query(
         `INSERT INTO userdata (user_email, user_password, user_name) VALUES ($1, $2, $3) RETURNING *`,
         [req_data.email, req_data.password, req_data.username]
       );
       //to do, maybe need to modify
-      console.log(new_user.rows[0]);
+      // console.log(new_user.rows[0]);
       const accessToken = await signAccessToken(new_user.rows[0].user_id);
       const refreshToken = await signRefreshToken(new_user.rows[0].user_id);
-      console.log("register accesstoken", accessToken);
+      // console.log("register accesstoken", accessToken);
       return res.json({
         status: "success",
         accessToken: accessToken,
@@ -51,7 +51,7 @@ module.exports = {
     try {
       const user = await pool.query(
         "SELECT * FROM userdata WHERE user_email=($1)",
-        [req_data.email]
+        [req_data.user_email]
       );
       if (user.rows.length === 0) {
         return res.send({
@@ -60,7 +60,7 @@ module.exports = {
         });
 
         // throw createError.NotFound("User not registered");
-      } else if (user.rows[0].password !== req_data.password) {
+      } else if (user.rows[0].password !== req_data.user_password) {
         return res.send({
           success: false,
           message: "password not valid",
@@ -88,7 +88,7 @@ module.exports = {
       });
     else {
       const auth = req.payload.userID;
-      console.log(auth);
+      // console.log(auth);
       return res.json({
         status: "success",
         user_id: auth,
