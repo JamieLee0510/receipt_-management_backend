@@ -22,3 +22,8 @@
 | /api/v1/user/register  | 會員註冊                  |
 | /api/v1/user/login     | 會員登入                  |
 | /api/v1/user/authority | 中間件 endpoint，確認會員 |
+
+### DB shema
+
+(will modify)
+[image](https://i.imgur.com/GcMiOeC.png)
