@@ -26,4 +26,4 @@
 ### DB shema
 
 (will modify)
-[image](https://i.imgur.com/GcMiOeC.png)
+![image](https://i.imgur.com/GcMiOeC.png)
